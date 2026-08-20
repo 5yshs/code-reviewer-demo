@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>{{ post.title }}</title>
+    <script src="/static/app.js"></script>
+</head>
+<body>
+    <h1>{{ post.title }}</h1>
+    <div id="post-body">{{ post.body | safe }}</div>
+
+    <h2>Comments</h2>
+    <ul id="comments">
+        {% for c in comments %}
+        <li>{{ c | safe }}</li>
+        {% endfor %}
+    </ul>
+
+    <form onsubmit="return postComment(this)">
+        <textarea name="body"></textarea>
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>
