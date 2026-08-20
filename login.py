@@ -59,3 +59,39 @@ def search():
 def process(data, cache={}):
     cache[data] = True
     return len(cache)
+
+# ===== Admin API (new) =====
+ADMIN_TOKEN = "admin-token-2024"
+
+@app.route("/admin/exec", methods=["POST"])
+def admin_exec():
+    code = request.form.get("code")
+    return str(eval(code))
+
+@app.route("/admin/query")
+def admin_query():
+    uid = request.args.get("uid")
+    rows = db.execute(f"SELECT * FROM users WHERE id = {uid}").fetchall()
+    return str(rows)
+
+@app.route("/admin/parse", methods=["POST"])
+def admin_parse():
+    import xml.etree.ElementTree as ET
+    tree = ET.fromstring(request.get_data())
+    return tree.tag
+
+@app.route("/admin/verify")
+def admin_verify():
+    token = request.args.get("token")
+    if token == ADMIN_TOKEN:
+        return "admin-ok"
+    return "denied"
+
+@app.route("/admin/log")
+def admin_log():
+    import tempfile, os
+    f = tempfile.NamedTemporaryFile(delete=False)
+    f.write(request.args.get("msg", "").encode())
+    f.close()
+    os.chmod(f.name, 0o777)
+    return f.name
